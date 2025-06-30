@@ -85,10 +85,22 @@ class _ItemListState extends State<ItemList> {
                   leading: Icon(Icons.shopping_bag),
                   title: Text(item.name),
                   subtitle: Text('${item.quantity} x ${item.price}: ${item.price * item.quantity}'),
-                  trailing: Row(children: [
-                    IconButton(onPressed:() => _removeItem(i), icon: Icon(Icons.delete)), // Delete Item
-                    IconButton(onPressed: () => _funEditItem(context, item), icon: Icon(Icons.edit)),
-                  ],),
+                  trailing: PopupMenuButton(itemBuilder: (context)=>[
+                    PopupMenuItem( // Edit Option
+                      child: TextButton.icon(
+                        onPressed:() => _funEditItem(context, item),
+                        icon: Icon(Icons.edit),
+                        label: Text('Edit Item')),
+                      ),
+                    PopupMenuItem( // Delete Option
+                      child: TextButton.icon(
+                        onPressed:() => _removeItem(i),
+                        icon: Icon(Icons.edit),
+                        label: Text('Delete Item')),
+                      ),
+                    ],
+                    icon: Icon(Icons.more_vert),
+                  )
                 ),
               );
             }),

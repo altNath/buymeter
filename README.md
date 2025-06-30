@@ -8,3 +8,4 @@
 <p>Some features are still to be added, but it's main functionality is working without any known issues.</p>
 
 <h1>📱Screenshots📱</h1>
+![image alt](https://github.com/altNath/buymeter/blob/6169c84c95f2c5109b7b04ebfdd3205eb9846487/flutter_01.png)

@@ -9,8 +9,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'BuyMeter - Product list builder and budget generator',
       home: MainScreen(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color.fromARGB(255, 53, 109, 23),
+          brightness: Brightness.light,
+          ),
+
+        ),
     );
   }
 }
@@ -22,7 +30,6 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 239, 250, 239),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 54, 116, 54),
         title: const Text('Buymeter'),
@@ -33,11 +40,6 @@ class MainScreen extends StatelessWidget {
           ],
       ),
       body: ItemList(),
-      bottomNavigationBar: BottomAppBar(
-          height: 60.0,
-          color: const Color.fromARGB(255, 54, 116, 54),
-          child: Text('Total: RS ', style: textstyle,),
-      ),
     );
   }
 }
@@ -68,6 +70,74 @@ class _ItemListState extends State<ItemList> {
   void _removeItem(int i){
     setState(() {
       _itemList.removeAt(i);
+      Navigator.pop(context);
+    });
+  }
+
+  void _editItem(BuildContext context, Item i){
+
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: Text('Edit Item'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField( // Name Input
+              controller: nameCtrl,
+              decoration: InputDecoration(
+              hintText: i.name,
+              ),
+            ),
+            SizedBox(height: 10.0,),
+            TextField( // Price Input
+              controller: priceCtrl,
+              decoration: InputDecoration(
+              hintText: i.price.toStringAsFixed(2),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 10.0,),
+            TextField( // Quantity Input
+              controller: qttCtrl,
+              decoration: InputDecoration(
+              hintText: i.quantity.toString(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 10.0,),
+          ],
+        ),
+        actions: [
+          Row(
+            children: [
+              TextButton(onPressed: Navigator.of(context).pop, child: Text('Cancel')),
+              ElevatedButton(onPressed:(){
+                setState(() {
+                  if (nameCtrl.text.isNotEmpty){
+                  i.name = nameCtrl.text;
+                  }
+                  if (priceCtrl.text.isNotEmpty){
+                    final newPrice = double.tryParse(priceCtrl.text);
+                    if (newPrice != null){
+                      i.price = newPrice;
+                    }
+                  }
+                  if (qttCtrl.text.isNotEmpty){
+                    final newQtt = int.tryParse(qttCtrl.text);
+                    if (newQtt != null){
+                      i.quantity = newQtt;
+                    }
+                  }
+                });
+                nameCtrl.clear();
+                priceCtrl.clear();
+                qttCtrl.clear();
+                Navigator.of(context).pop();
+              }, child: Text('Save'))
+            ],
+          )
+        ],
+      );
     });
   }
 
@@ -81,21 +151,22 @@ class _ItemListState extends State<ItemList> {
             itemBuilder:(context, i){
               final item = _itemList[i];
               return Card(
+                color: Color.fromARGB(255, 185, 255, 185),
                 child: ListTile(
                   leading: Icon(Icons.shopping_bag),
                   title: Text(item.name),
-                  subtitle: Text('${item.quantity} x ${item.price}: ${item.price * item.quantity}'),
+                  subtitle: Text('${item.quantity} x ${item.price.toStringAsFixed(2)}: ${(item.price * item.quantity).toStringAsFixed(2)}'),
                   trailing: PopupMenuButton(itemBuilder: (context)=>[
                     PopupMenuItem( // Edit Option
                       child: TextButton.icon(
-                        onPressed:() => _funEditItem(context, item),
+                        onPressed:() => _editItem(context, item),
                         icon: Icon(Icons.edit),
                         label: Text('Edit Item')),
                       ),
                     PopupMenuItem( // Delete Option
                       child: TextButton.icon(
                         onPressed:() => _removeItem(i),
-                        icon: Icon(Icons.edit),
+                        icon: Icon(Icons.delete),
                         label: Text('Delete Item')),
                       ),
                     ],
@@ -105,12 +176,30 @@ class _ItemListState extends State<ItemList> {
               );
             }),
           ),
-        NewItemWindow(onAdd: _addItem),
+          BottomAppBar(
+            color: const Color.fromARGB(255, 54, 116, 54),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+              SizedBox(width: 20.0,),
+              Text('Total: ${_displayTotalCost(_itemList)}', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white,),),
+              SizedBox(width: 160.0,),
+              NewItemWindow(onAdd: _addItem),
+              ],
+            ),
+          ),
       ],
     );
   }
 }
 
+String _displayTotalCost(List<Item> l){
+  double total = 0.0;
+  for(int i = 0; i < l.length; i++){
+    total += (l[i].price * l[i].quantity);
+  }
+  return total.toStringAsFixed(2);
+}
 
 class NewItemWindow extends StatelessWidget {
   final void Function(Item) onAdd;
@@ -159,6 +248,9 @@ class NewItemWindow extends StatelessWidget {
               quantity: int.tryParse(qttCtrl.text) ?? 0,
             );
             onAdd(newItem);
+            nameCtrl.clear();
+            priceCtrl.clear();
+            qttCtrl.clear();
             Navigator.of(context).pop();
           }, child: Text('Add Item')),
         ],
@@ -168,96 +260,11 @@ class NewItemWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              onPressed:() => _funNewItem(context),
-              child: Icon(Icons.add),
-              ),
-            SizedBox(
-              width: 20.0,
-            )
-          ],
-        ),
-        SizedBox(
-          height: 10.0,
-        )
-      ],
+    return FloatingActionButton(
+      onPressed:() => _funNewItem(context),
+      child: Icon(Icons.add),
     );
   }
-}
-
-void _funEditItem(BuildContext context, Item i){ // Editing items does not require acces to the list, therefore doesn't need to be inside the widget
-  final nameCtrl = TextEditingController();
-  final priceCtrl = TextEditingController();
-  final qttCtrl = TextEditingController();
-
-
-  showDialog(context: context, builder: (context){
-    return AlertDialog(
-      title: Text('Edit Item'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField( // Name Input
-            controller: nameCtrl,
-            decoration: InputDecoration(
-            labelText: 'Item Name',
-            hintText: i.name,
-            ),
-          ),
-          SizedBox(height: 10.0,),
-          TextField( // Price Input
-            controller: priceCtrl,
-            decoration: InputDecoration(
-            labelText: 'Item Name',
-            hintText: i.price.toStringAsFixed(2),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          SizedBox(height: 10.0,),
-          TextField( // Quantity Input
-            controller: qttCtrl,
-            decoration: InputDecoration(
-            labelText: 'Item Name',
-            hintText: i.quantity.toString(),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          SizedBox(height: 10.0,),
-        ],
-      ),
-      actions: [
-        Row(
-          children: [
-            TextButton(onPressed: Navigator.of(context).pop, child: Text('Cancel')),
-            ElevatedButton(onPressed:(){
-              if (nameCtrl.text.isNotEmpty){
-                i.name = nameCtrl.text;
-              }
-              if (priceCtrl.text.isNotEmpty){
-                final newPrice = double.tryParse(priceCtrl.text);
-                if (newPrice != null){
-                  i.price = newPrice;
-                }
-              }
-              if (qttCtrl.text.isNotEmpty){
-                final newQtt = int.tryParse(qttCtrl.text);
-                if (newQtt != null){
-                  i.quantity = newQtt;
-                }
-              }
-              Navigator.of(context).pop();
-            }, child: Text('Save'))
-          ],
-        )
-      ],
-    );
-  });
 }
 
 class Item{

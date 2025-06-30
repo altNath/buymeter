@@ -90,21 +90,10 @@ class _ItemListState extends State<ItemList> {
                   leading: Icon(Icons.shopping_bag),
                   title: Text(item.name),
                   subtitle: Text('${item.quantity} x ${item.price}: ${item.price * item.quantity}'),
-                  trailing: PopupMenuButton<MenuOptions>(
-                    onSelected: (value) {
-                      if (value == MenuOptions.edit){
-                        print('WIP');
-                      }
-                      else if (value == MenuOptions.delete){
-                        _removeItem(i);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(value: MenuOptions.edit, child: Row(children: [Icon(Icons.edit), Text('Edit')],)),
-                      PopupMenuItem(value: MenuOptions.delete, child: Row(children: [Icon(Icons.delete), Text('Delete')],)),
-                    ],
-                    icon: Icon(Icons.more_vert),
-                    ),
+                  trailing: Row(children: [
+                    IconButton(onPressed:() => _removeItem(i), icon: Icon(Icons.delete)), // Delete Item
+                    IconButton(onPressed: () => _funEditItem(context, item), icon: Icon(Icons.edit)),
+                  ],),
                 ),
               );
             }),
@@ -118,7 +107,7 @@ class _ItemListState extends State<ItemList> {
 
 class NewItemWindow extends StatelessWidget {
   final void Function(Item) onAdd;
-  NewItemWindow({required this.onAdd});
+  NewItemWindow({super.key, required this.onAdd});
 
   // Object controllers
   final nameCtrl = TextEditingController();
@@ -195,6 +184,74 @@ class NewItemWindow extends StatelessWidget {
   }
 }
 
+void _funEditItem(BuildContext context, Item i){
+  final nameCtrl = TextEditingController();
+  final priceCtrl = TextEditingController();
+  final qttCtrl = TextEditingController();
+
+
+  showDialog(context: context, builder: (context){
+    return AlertDialog(
+      title: Text('Edit Item'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField( // Name Input
+            controller: nameCtrl,
+            decoration: InputDecoration(
+            labelText: 'Item Name',
+            hintText: i.name,
+            ),
+          ),
+          SizedBox(height: 10.0,),
+          TextField( // Price Input
+            controller: priceCtrl,
+            decoration: InputDecoration(
+            labelText: 'Item Name',
+            hintText: i.price.toStringAsFixed(2),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          SizedBox(height: 10.0,),
+          TextField( // Quantity Input
+            controller: qttCtrl,
+            decoration: InputDecoration(
+            labelText: 'Item Name',
+            hintText: i.quantity.toString(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          SizedBox(height: 10.0,),
+        ],
+      ),
+      actions: [
+        Row(
+          children: [
+            TextButton(onPressed: Navigator.of(context).pop, child: Text('Cancel')),
+            ElevatedButton(onPressed:(){
+              if (nameCtrl.text.isNotEmpty){
+                i.name = nameCtrl.text;
+              }
+              if (priceCtrl.text.isNotEmpty){
+                final newPrice = double.tryParse(priceCtrl.text);
+                if (newPrice != null){
+                  i.price = newPrice;
+                }
+              }
+              if (qttCtrl.text.isNotEmpty){
+                final newQtt = int.tryParse(qttCtrl.text);
+                if (newQtt != null){
+                  i.quantity = newQtt;
+                }
+              }
+              Navigator.of(context).pop();
+            }, child: Text('Save'))
+          ],
+        )
+      ],
+    );
+  });
+}
 
 class Item{
   String name;

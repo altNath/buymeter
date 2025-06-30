@@ -42,6 +42,11 @@ class MainScreen extends StatelessWidget {
   }
 }
 
+enum MenuOptions{
+  edit,
+  delete,
+  }
+
 class ItemList extends StatefulWidget {
   const ItemList({super.key});
 
@@ -85,10 +90,18 @@ class _ItemListState extends State<ItemList> {
                   leading: Icon(Icons.shopping_bag),
                   title: Text(item.name),
                   subtitle: Text('${item.quantity} x ${item.price}: ${item.price * item.quantity}'),
-                  trailing: PopupMenuButton(
+                  trailing: PopupMenuButton<MenuOptions>(
+                    onSelected: (value) {
+                      if (value == MenuOptions.edit){
+                        print('WIP');
+                      }
+                      else if (value == MenuOptions.delete){
+                        _removeItem(i);
+                      }
+                    },
                     itemBuilder: (context) => [
-                      PopupMenuItem(child: Row(children: [Icon(Icons.edit), Text('Edit')],)),
-                      PopupMenuItem(child: Row(children: [Icon(Icons.delete), Text('Delete')],)),
+                      PopupMenuItem(value: MenuOptions.edit, child: Row(children: [Icon(Icons.edit), Text('Edit')],)),
+                      PopupMenuItem(value: MenuOptions.delete, child: Row(children: [Icon(Icons.delete), Text('Delete')],)),
                     ],
                     icon: Icon(Icons.more_vert),
                     ),
@@ -130,7 +143,7 @@ class NewItemWindow extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Unit Price',
               ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType: TextInputType.number,
             ),
             TextField( // ---------- Quantity field
               controller: qttCtrl,

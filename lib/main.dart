@@ -35,9 +35,6 @@ class MainScreen extends StatelessWidget {
         title: const Text('Buymeter'),
         titleTextStyle: textstyle,
         centerTitle: true,
-        actions: [
-          IconButton(onPressed:() => print('WIP'), icon: const Icon(Icons.menu, color: Colors.white,)),
-          ],
       ),
       body: ItemList(),
     );
@@ -143,7 +140,8 @@ class _ItemListState extends State<ItemList> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+      body: Column(
       children: [
         Expanded(
           child: ListView.builder(
@@ -176,19 +174,20 @@ class _ItemListState extends State<ItemList> {
               );
             }),
           ),
-          BottomAppBar(
-            color: const Color.fromARGB(255, 54, 116, 54),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-              SizedBox(width: 20.0,),
-              Text('Total: ${_displayTotalCost(_itemList)}', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white,),),
-              SizedBox(width: 160.0,),
-              NewItemWindow(onAdd: _addItem),
-              ],
-            ),
-          ),
       ],
+    ),
+    bottomNavigationBar: BottomAppBar(
+      color: const Color.fromARGB(255, 54, 116, 54),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+        SizedBox(width: 20.0,),
+        Text('Total: ${_displayTotalCost(_itemList)}', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white,),),
+        ],
+      ),
+    ),
+    floatingActionButton: NewItemWindow(onAdd: _addItem),
+    floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }

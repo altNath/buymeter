@@ -42,11 +42,6 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-enum MenuOptions{
-  edit,
-  delete,
-  }
-
 class ItemList extends StatefulWidget {
   const ItemList({super.key});
 
@@ -184,7 +179,7 @@ class NewItemWindow extends StatelessWidget {
   }
 }
 
-void _funEditItem(BuildContext context, Item i){
+void _funEditItem(BuildContext context, Item i){ // Editing items does not require acces to the list, therefore doesn't need to be inside the widget
   final nameCtrl = TextEditingController();
   final priceCtrl = TextEditingController();
   final qttCtrl = TextEditingController();

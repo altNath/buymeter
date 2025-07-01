@@ -10,3 +10,8 @@
 <h1>📱Installation💻</h1>
 <p>Android builds are available at the <a href="https://github.com/altNath/buymeter/releases">releases</a> section.</p>
 <p>For other devices, clone this repository/download it, open with your preferred IDE (VSCode is recommended) and refer to your device's corresponding section at <a href="url">docs.flutter.dev/deployment</a>.</p>
+
+<h1>📃To Add✅</h1>
+<p>⚫ Language Settings</p>
+<p>⚫ Export/Import lists</p>
+<p>⚫ "Help" tab for better understanding of the app's functioning</p>

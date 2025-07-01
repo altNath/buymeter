@@ -9,4 +9,4 @@
 
 <h1>📱Installation💻</h1>
 <p>Android builds are available at the releases section</p>
-<p>For other devices, clone this repository/download it, open with your preferred IDE (VSCode is recommended) and refer to your device's corresponding section at </p><a>docs.flutter.dev/deployment</a>
+<p>For other devices, clone this repository/download it, open with your preferred IDE (VSCode is recommended) and refer to your device's corresponding section at <a href="url">docs.flutter.dev/deployment</a></p>

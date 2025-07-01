@@ -8,5 +8,5 @@
 <p>Some features are still to be added, but it's main functionality is working without any known issues.</p>
 
 <h1>📱Installation💻</h1>
-<p>Android builds are available at the releases section</p>
-<p>For other devices, clone this repository/download it, open with your preferred IDE (VSCode is recommended) and refer to your device's corresponding section at <a href="url">docs.flutter.dev/deployment</a></p>
+<p>Android builds are available at the releases section.</p>
+<p>For other devices, clone this repository/download it, open with your preferred IDE (VSCode is recommended) and refer to your device's corresponding section at <a href="url">docs.flutter.dev/deployment</a>.</p>

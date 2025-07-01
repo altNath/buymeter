@@ -15,3 +15,4 @@
 <p>⚫ Language Settings</p>
 <p>⚫ Export/Import lists</p>
 <p>⚫ "Help" tab for better understanding of the app's functioning</p>
+<p>⚫ Change the icon</p>
